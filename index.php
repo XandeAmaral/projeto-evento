@@ -2,60 +2,79 @@
 include_once 'model/Integrante.php';
 $integrante = new Integrante();
 $tela       = "telaIntegrante";
-$msg        = "";
 
-if (!empty(filter_input(INPUT_GET, 'msg'))) {
-  $msg   = filter_input(INPUT_GET, 'msg');
-  $dados = $integrante->consultarUltimo();
+if (!empty(filter_input(INPUT_GET, 'operacao'))) {
+  $operacao   = filter_input(INPUT_GET, 'operacao');
+  $dados      = $integrante->consultarUltimo();
 
   if (is_array($dados) && !empty($dados)) {
-    $id  = $dados[0]['id_int'];
-    $integrante->setId($id);
+    $id = $dados[0]['id_int'];
 
     if (!empty($id)) {
-      $dados = $integrante->consultarPorID();
+      $valores = buscaID($integrante, $id);
 
-      if (is_array($dados) && !empty($dados)) {
-        $linha      = $dados[0];
-        $id         = $linha['id_int'];
-        $personagem = $linha['personagem_int'];
-        $nome       = $linha['nome_int'];
-        $data       = $linha['data_int'];
-        $cpf        = $linha['cpf_int'];
-      } else echo '<div> Falha no retorno do método de buscar por id <div/>';
-    } else echo "<div> falha ao tentar retornar o usuario aslvo <div/>";
-  } else echo '<div> Falha no retorno do método de buscar por id <div/>';
+      $personagem = $valores['personagem'];
+      $nome       = $valores['nome'];
+      $data       = $valores['data'];
+      $cpf        = $valores['cpf'];
+
+    } else echo "<div> falha ao tentar retornar o usuario salvo <div/>";
+  }
+  else echo "<div> nenhum dado no banco para retornar <div/>";
+} elseif (!empty(filter_input(INPUT_GET, 'id'))) {
+  $id = filter_input(INPUT_GET, 'id');
+
+  $valores = buscaID($integrante, $id);
+
+  $personagem = $valores['personagem'];
+  $nome       = $valores['nome'];
+  $data       = $valores['data'];
+  $cpf        = $valores['cpf'];
+} elseif (!empty(filter_input(INPUT_GET, 'cpf'))) {
+  $cpf = filter_input(INPUT_GET, 'cpf');
+
+  $valores = buscaCPF($integrante, $cpf);
+
+  $id         = $valores['id'];
+  $personagem = $valores['personagem'];
+  $nome       = $valores['nome'];
+  $data       = $valores['data'];
 }
 
-if (!empty(filter_input(INPUT_GET, 'id'))) {
-  $id    = filter_input(INPUT_GET, 'id');
+
+function buscaCPF($integrante, $cpf) {
+  $integrante->setCpf($cpf);
+  $dados = $integrante->consultarPorCpf();
+
+  if (is_array($dados)) {
+    return atribuirValores($dados[0]);
+  } else
+    echo "<div> Falha no retorno do método de buscar por cpf </div>";
+};
+function buscaID($integrante, $id){
   $integrante->setId($id);
   $dados = $integrante->consultarPorID();
 
-  if (is_array($dados)) {
-    $linha      = $dados[0];
-    $id         = $linha['id_int'];
-    $personagem = $linha['personagem_int'];
-    $nome       = $linha['nome_int'];
-    $data       = $linha['data_int'];
-    $cpf        = $linha['cpf_int'];
-  } else echo '<div> Falha no retorno do método de buscar por id <div/>';
-} else {
-  if (!empty(filter_input(INPUT_GET, 'cpf'))) {
-    $cpf   = filter_input(INPUT_GET, 'cpf');
-    $integrante->setCpf($cpf);
-    $dados = $integrante->consultarPorCpf();
+  if (is_array($dados))
+    atribuirValores($dados[0]);
+  else
+    echo "<div> Falha no retorno do método de buscar por id </div>";
+};
+function atribuirValores($colunas){
+  $id         = $colunas['id_int'];
+  $personagem = $colunas['personagem_int'];
+  $nome       = $colunas['nome_int'];
+  $data       = $colunas['data_int'];
+  $cpf        = $colunas['cpf_int'];
 
-    if (is_array($dados)) {
-      $linha      = $dados[0];
-      $id         = $linha['id_int'];
-      $personagem = $linha['personagem_int'];
-      $nome       = $linha['nome_int'];
-      $data       = $linha['data_int'];
-      $cpf        = $linha['cpf_int'];
-    }
-  }
-}
+  return array(
+    'id' => $id,
+    'personagem' => $personagem,
+    'nome' => $nome,
+    'data' => $data,
+    'cpf' => $cpf
+  );
+};
 ?>
 
 
@@ -83,8 +102,8 @@ if (!empty(filter_input(INPUT_GET, 'id'))) {
     <input type="submit" name="btnBuscarId" value="Buscar por ID">
     <input type="submit" name="btnBuscarCPF" value="Buscar por CPF">
     <?php
-    if (!empty($msg)) {
-      echo "<br/><br/><div>$msg!!</div>";
+    if (!empty($operacao)) {
+      echo "<br/><br/><div>$operacao!!</div>";
     }
     if (!empty($id) || !empty($cpf)) {
       echo "<input type=\"submit\" name=\"btnDeletar\" value=\"Deletar Integrante Selecionado\">";
@@ -97,11 +116,11 @@ if (!empty(filter_input(INPUT_GET, 'id'))) {
 
 <?php
 if (filter_input(INPUT_POST, 'btnCadastroIntegrante')) {
-  $id = filter_input(INPUT_POST, 'txtId');
+  $id         = filter_input(INPUT_POST, 'txtId');
   $personagem = filter_input(INPUT_POST, 'txtPersonagem');
-  $nome = filter_input(INPUT_POST, 'txtNome');
-  $data = filter_input(INPUT_POST, 'txtData');
-  $cpf = filter_input(INPUT_POST, 'txtCpf');
+  $nome       = filter_input(INPUT_POST, 'txtNome');
+  $data       = filter_input(INPUT_POST, 'txtData');
+  $cpf        = filter_input(INPUT_POST, 'txtCpf');
 
   include_once 'model/Integrante.php';
   $integrante = new Integrante();
@@ -111,9 +130,9 @@ if (filter_input(INPUT_POST, 'btnCadastroIntegrante')) {
   $integrante->setNome($nome);
   $integrante->setData($data);
   $integrante->setCpf($cpf);
-  $msg = $integrante->salvar();
+  $operacao       = $integrante->salvar();
 
-  header("Location: http://localhost/site%20evento/?p=$tela&msg=$msg");
+  header("Location: http://localhost/site%20evento/?p=$tela&operacao=$operacao");
   exit();
 }
 
