@@ -1,61 +1,58 @@
 <?php
 include_once 'model/Integrante.php';
 $integrante = new Integrante();
-$tela = "telaIntegrante";
-$msg = "";
+$tela       = "telaIntegrante";
+$msg        = "";
 
 if (!empty(filter_input(INPUT_GET, 'msg'))) {
-  $msg = filter_input(INPUT_GET, 'msg');
+  $msg   = filter_input(INPUT_GET, 'msg');
   $dados = $integrante->consultarUltimo();
 
   if (is_array($dados) && !empty($dados)) {
-    $id = $dados[0]['id_int'];
+    $id  = $dados[0]['id_int'];
     $integrante->setId($id);
 
     if (!empty($id)) {
       $dados = $integrante->consultarPorID();
 
       if (is_array($dados) && !empty($dados)) {
-        $linha = $dados[0];
-        $id = $linha['id_int'];
+        $linha      = $dados[0];
+        $id         = $linha['id_int'];
         $personagem = $linha['personagem_int'];
-        $nome = $linha['nome_int'];
-        $data = $linha['data_int'];
-        $cpf = $linha['cpf_int'];
+        $nome       = $linha['nome_int'];
+        $data       = $linha['data_int'];
+        $cpf        = $linha['cpf_int'];
       } else echo '<div> Falha no retorno do método de buscar por id <div/>';
     } else echo "<div> falha ao tentar retornar o usuario aslvo <div/>";
   } else echo '<div> Falha no retorno do método de buscar por id <div/>';
 }
 
 if (!empty(filter_input(INPUT_GET, 'id'))) {
-  $id = filter_input(INPUT_GET, 'id');
+  $id    = filter_input(INPUT_GET, 'id');
   $integrante->setId($id);
   $dados = $integrante->consultarPorID();
-  echo 'entrei com id';
 
   if (is_array($dados)) {
-    $linha = $dados[0];
-    $id = $linha['id_int'];
+    $linha      = $dados[0];
+    $id         = $linha['id_int'];
     $personagem = $linha['personagem_int'];
-    $nome = $linha['nome_int'];
-    $data = $linha['data_int'];
-    $cpf = $linha['cpf_int'];
+    $nome       = $linha['nome_int'];
+    $data       = $linha['data_int'];
+    $cpf        = $linha['cpf_int'];
   } else echo '<div> Falha no retorno do método de buscar por id <div/>';
-  
 } else {
   if (!empty(filter_input(INPUT_GET, 'cpf'))) {
-    echo 'entrei com cpf';
-    $cpf = filter_input(INPUT_GET, 'cpf');
+    $cpf   = filter_input(INPUT_GET, 'cpf');
     $integrante->setCpf($cpf);
     $dados = $integrante->consultarPorCpf();
 
     if (is_array($dados)) {
-      $linha = $dados[0];
-      $id = $linha['id_int'];
+      $linha      = $dados[0];
+      $id         = $linha['id_int'];
       $personagem = $linha['personagem_int'];
-      $nome = $linha['nome_int'];
-      $data = $linha['data_int'];
-      $cpf = $linha['cpf_int'];
+      $nome       = $linha['nome_int'];
+      $data       = $linha['data_int'];
+      $cpf        = $linha['cpf_int'];
     }
   }
 }
@@ -89,7 +86,7 @@ if (!empty(filter_input(INPUT_GET, 'id'))) {
     if (!empty($msg)) {
       echo "<br/><br/><div>$msg!!</div>";
     }
-    if (!empty($id)||!empty($cpf)) {
+    if (!empty($id) || !empty($cpf)) {
       echo "<input type=\"submit\" name=\"btnDeletar\" value=\"Deletar Integrante Selecionado\">";
     }
     ?>
@@ -132,11 +129,9 @@ if (filter_input(INPUT_POST, 'btnBuscarCPF')) {
   exit();
 }
 
-if (filter_input(INPUT_POST, 'btnDeletar')) {  
-  if(!empty($id)){
+if (filter_input(INPUT_POST, 'btnDeletar')) {
+  if (!empty($id)) {
     header("Location: http://localhost/site%20evento/?id=$id&del=1");
     exit();
-  }
-  else echo "<div>Falha erro ao pegar o ID para deletar<div/>";
+  } else echo "<div>Falha erro ao pegar o ID para deletar<div/>";
 }
-
