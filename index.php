@@ -22,11 +22,9 @@ if (!empty(filter_input(INPUT_GET, 'msg'))) {
         $nome = $linha['nome_int'];
         $data = $linha['data_int'];
         $cpf = $linha['cpf_int'];
-      } else
-        echo '<div> Falha no retorno do método de buscar por id <div/>';
+      } else echo '<div> Falha no retorno do método de buscar por id <div/>';
     } else echo "<div> falha ao tentar retornar o usuario aslvo <div/>";
-  } else
-    echo '<div> Falha no retorno do método de buscar por id <div/>';
+  } else echo '<div> Falha no retorno do método de buscar por id <div/>';
 }
 
 if (!empty(filter_input(INPUT_GET, 'id'))) {
@@ -42,8 +40,8 @@ if (!empty(filter_input(INPUT_GET, 'id'))) {
     $nome = $linha['nome_int'];
     $data = $linha['data_int'];
     $cpf = $linha['cpf_int'];
-  } else
-    echo '<div> Falha no retorno do método de buscar por id <div/>';
+  } else echo '<div> Falha no retorno do método de buscar por id <div/>';
+  
 } else {
   if (!empty(filter_input(INPUT_GET, 'cpf'))) {
     echo 'entrei com cpf';
@@ -91,6 +89,9 @@ if (!empty(filter_input(INPUT_GET, 'id'))) {
     if (!empty($msg)) {
       echo "<br/><br/><div>$msg!!</div>";
     }
+    if (!empty($id)||!empty($cpf)) {
+      echo "<input type=\"submit\" name=\"btnDeletar\" value=\"Deletar Integrante Selecionado\">";
+    }
     ?>
   </form>
 </body>
@@ -118,13 +119,24 @@ if (filter_input(INPUT_POST, 'btnCadastroIntegrante')) {
   header("Location: http://localhost/site%20evento/?p=$tela&msg=$msg");
   exit();
 }
+
 if (filter_input(INPUT_POST, 'btnBuscarId')) {
   $id = filter_input(INPUT_POST, 'txtId');
   header("Location:http://localhost/site%20evento/?p=$tela&id=$id");
   exit();
 }
+
 if (filter_input(INPUT_POST, 'btnBuscarCPF')) {
   $cpf = filter_input(INPUT_POST, 'txtCpf');
   header("Location: http://localhost/site%20evento/?p=$tela&cpf=$cpf");
   exit();
 }
+
+if (filter_input(INPUT_POST, 'btnDeletar')) {  
+  if(!empty($id)){
+    header("Location: http://localhost/site%20evento/?id=$id&del=1");
+    exit();
+  }
+  else echo "<div>Falha erro ao pegar o ID para deletar<div/>";
+}
+
