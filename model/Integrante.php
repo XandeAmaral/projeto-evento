@@ -48,7 +48,7 @@ class Integrante {
       if (!empty($this->getCpf())) {
         $sql = "SELECT id_int, personagem_int, nome_int, data_int, cpf_int FROM integrante WHERE cpf_int = ?";
         $ligacao = $this->con->prepare($sql);
-        $ligacao->bindValue(1, $this->cpf, PDO::PARAM_STR);
+        $ligacao->bindValue(1, $this->getCpf(), PDO::PARAM_STR);
 
         if ($ligacao->execute())
           return $ligacao->fetchAll();
@@ -65,7 +65,7 @@ class Integrante {
       if (!empty($this->getId())) {
           $sql = "SELECT id_int, personagem_int, nome_int, data_int, cpf_int FROM integrante WHERE id_int = ?";
           $ligacao = $this->con->prepare($sql);
-          $ligacao->bindValue(1, $this->id, PDO::PARAM_INT);
+          $ligacao->bindValue(1, $this->getId(), PDO::PARAM_INT);
       }
       if ($ligacao->execute())
         return $ligacao->fetchAll();
@@ -101,26 +101,80 @@ class Integrante {
   }
 
 
-  function salvar() {
-    //CALL salvar_integrante(null, 'Arvore', 'Maria', '04/05/2023' , '12345678906');
+  // function salvar() {
+  //   //CALL salvar_integrante(null, 'Arvore', 'Maria', '04/05/2023' , '12345678906');
+  //   try{
+  //     $this->con = new Conectar();
+  //     $sql = "CALL salvar_integrante(?, ?, ?, ? , ?)";
+  //     $ligacao = $this->con->prepare($sql);
+
+  //     if(empty($this->getId())) {
+  //       $ligacao->bindValue(1, null, PDO::PARAM_NULL);
+  //       $mensagem = "Integrante salvo com sucesso";
+  //     }
+  //     else {
+  //       $ligacao->bindValue(1, $this->getId(), PDO::PARAM_INT);
+  //       $mensagem = "Integrante atualizado com sucesso";
+  //     }
+
+  //     $ligacao->bindValue(2, $this->getPersonagem(), PDO::PARAM_STR);
+  //     $ligacao->bindValue(3, $this->getNome(), PDO::PARAM_STR);
+  //     $ligacao->bindValue(4, $this->getData(), PDO::PARAM_STR);
+  //     $ligacao->bindValue(5, $this->getCpf(), PDO::PARAM_STR);
+
+  //     if($ligacao->execute() == 1)
+  //       return $mensagem;
+  //     else
+  //       return "Erro ao cadastrar.";
+  //   }
+  //   catch(PDOException $exc) { echo $exc->getMessage(); }
+  // }
+
+  // function excluir() {
+  //   try {
+  //     $this->con = new Conectar();
+  //     if (!empty($this->getCpf())) {
+  //       $sql = "DELETE FROM integrante WHERE cpf_int = ?";
+  //       $ligacao = $this->con->prepare($sql);
+  //       $ligacao->bindValue(1, $this->getCpf(), PDO::PARAM_STR);
+  //     }
+  //     else if (!empty($this->getId())) {
+  //       $sql = "DELETE FROM integrante WHERE id_int = ?";
+  //       $ligacao = $this->con->prepare($sql);
+  //       $ligacao->bindValue(1, $this->getId(), PDO::PARAM_INT);
+  //     }
+  //     if ($ligacao->execute() == 1)
+  //       return "Excluído com sucesso.";
+  //     else
+  //       return "Erro ao excluir.";
+  //   } 
+  //   catch (PDOException $exc) { echo $exc->getMessage(); }
+  // }
+
+  function crud($deletar) {
     try{
-      $this->con = new Conectar();
-      $sql = "CALL salvar_integrante(?, ?, ?, ? , ?)";
+      $opcao = 0;
+      $this-> con = new Conectar();
+      $sql = "CALL crud_integrante(?, ?, ?, ?, ?, ?)"; // crud_integrante(id,personagem,nome,data,cpf,option)
       $ligacao = $this->con->prepare($sql);
 
       if(empty($this->getId())) {
         $ligacao->bindValue(1, null, PDO::PARAM_NULL);
         $mensagem = "Integrante salvo com sucesso";
-      }
+      } 
       else {
         $ligacao->bindValue(1, $this->id, PDO::PARAM_INT);
         $mensagem = "Integrante atualizado com sucesso";
+        if ($deletar == true) {
+          $opcao = 1;
+          $mensagem = "Integrante deletado com sucesso";
+        }
       }
-
-      $ligacao->bindValue(2, $this->personagem, PDO::PARAM_STR);
-      $ligacao->bindValue(3, $this->nome, PDO::PARAM_STR);
-      $ligacao->bindValue(4, $this->data, PDO::PARAM_STR);
-      $ligacao->bindValue(5, $this->cpf, PDO::PARAM_STR);
+      $ligacao->bindValue(2, $this->getPersonagem(), PDO::PARAM_STR);
+      $ligacao->bindValue(3, $this->getNome(), PDO::PARAM_STR);
+      $ligacao->bindValue(4, $this->getData(), PDO::PARAM_STR);
+      $ligacao->bindValue(5, $this->getCpf(), PDO::PARAM_STR);
+      $ligacao->bindValue(6, $opcao, PDO::PARAM_INT);
 
       if($ligacao->execute() == 1)
         return $mensagem;
@@ -128,27 +182,6 @@ class Integrante {
         return "Erro ao cadastrar.";
     }
     catch(PDOException $exc) { echo $exc->getMessage(); }
-  }
-
-  function excluir() {
-    try {
-      $this->con = new Conectar();
-      if (!empty($this->getCpf())) {
-        $sql = "DELETE FROM integrante WHERE cpf_int = ?";
-        $ligacao = $this->con->prepare($sql);
-        $ligacao->bindValue(1, $this->cpf, PDO::PARAM_STR);
-      }
-      else if (!empty($this->id)) {
-        $sql = "DELETE FROM integrante WHERE id_int = ?";
-        $ligacao = $this->con->prepare($sql);
-        $ligacao->bindValue(1, $this->id, PDO::PARAM_INT);
-      }
-      if ($ligacao->execute() == 1)
-        return "Excluído com sucesso.";
-      else
-        return "Erro ao excluir.";
-    } 
-    catch (PDOException $exc) { echo $exc->getMessage(); }
   }
 }
 
