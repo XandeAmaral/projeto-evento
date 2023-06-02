@@ -12,7 +12,7 @@ if (!empty(filter_input(INPUT_GET, 'operacao'))) {
   else $valores = buscaUltimo($integrante);
 
   if (is_array($valores) && !empty($valores)) {
-    $id = $valores['id'];
+    $id         = $valores['id'];
     $personagem = $valores['personagem'];
     $nome       = $valores['nome'];
     $data       = $valores['data'];
